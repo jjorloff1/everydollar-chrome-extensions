@@ -1,5 +1,7 @@
 console.log("Running extension Content Script.");
 
+var excludedCategories;
+
 /* Given a function which would return an element or NodeList, this function indicates
  * whether that element is displayed on the page */
 var elementExistsOnPage = function (elementFunction) {
@@ -84,14 +86,23 @@ var colorCodeBankAccountBalanceCalculation = function (balance) {
     });
 };
 
+var isCategoryExcluded = function(item) {
+    var itemLabel = item.parentElement.parentElement.parentElement.querySelector(".BudgetItem-label");
+
+    console.log("Current excluded categories: " + excludedCategories);
+    return excludedCategories.includes(itemLabel.dataset.text);
+};
+
 var calculateBudgetNeedsBalance = function () {
     var sum = 0.00;
     var allValues = document.querySelectorAll(".money--remaining");
     allValues.forEach(function (item) {
-        var value = convertMoneyStringToNumber(item.dataset.text)
-        sum += parseFloat(value) * 100;
+        if(!isCategoryExcluded(item)) {
+            var value = convertMoneyStringToNumber(item.dataset.text)
+            sum += parseFloat(value) * 100;
+        }
     });
-    return (sum - 1500000) / 100; // TODO: Make the exclusions dynamic
+    return sum / 100;
 };
 
 var budgetPageElement = function () {
@@ -141,7 +152,7 @@ var displayBankAccountCalculation = function (balance) {
         sidebar.insertAdjacentHTML("afterbegin", accountBalanceHtml(balance));
     }
 
-    document.querySelector(".extensions-AccountBalance-refreshLink").addEventListener("click", calculateAndDisplayBalance);
+    document.querySelector(".extensions-AccountBalance-refreshLink").addEventListener("click", syncSettingsAndExecuteCalculations);
     colorCodeBankAccountBalanceCalculation(balance);
 };
 
@@ -166,10 +177,32 @@ var calculateAndDisplayBalance = function () {
     }
 };
 
+var syncSettingsAndExecuteCalculations = function() {
+    chrome.storage.sync.get("excludedCategories", function(data) {
+        console.log("Setting excludedCategories with value:" + data["excludedCategories"]);
+
+        var excludedCategoriesListString = data["excludedCategories"];
+
+        excludedCategories = [];
+        if (excludedCategoriesListString.includes(",")) {
+            excludedCategories = excludedCategoriesListString.split(",").map((category) => {
+                return category.trim();
+            });
+        } else {
+            excludedCategories.push(excludedCategoriesListString.trim());
+        }
+
+        console.log("Excluded Categories: " + excludedCategories);
+
+        calculateAndDisplayBalance();
+    });
+};
+
 console.log("Waiting for budget page to load.");
 executeAfterElementLoaded(budgetPageElement, function() {
     console.log("Budget page loaded.  Starting Bank Account Calculation.");
     console.log("Will recalculate every minute.");
-    setInterval(calculateAndDisplayBalance, 60000);
-    calculateAndDisplayBalance();
+    setInterval(syncSettingsAndExecuteCalculations, 60000);
+    syncSettingsAndExecuteCalculations();
+
 });
