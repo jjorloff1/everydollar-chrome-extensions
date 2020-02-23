@@ -1,6 +1,8 @@
 console.log("Running extension Content Script.");
 
+const settingKeys = ["excludedCategories", "bankAccountName"];
 var excludedCategories;
+var bankAccountName;
 
 /* Given a function which would return an element or NodeList, this function indicates
  * whether that element is displayed on the page */
@@ -72,7 +74,7 @@ var retrieveAccountBalance = function (balance, callback) {
     openBankAccountPanel();
 
     executeAfterElementLoaded(bankAccountElements, function() {
-        var accountBalance = retreiveAccountBalanceFromModal("Interest Checking");
+        var accountBalance = retreiveAccountBalanceFromModal(bankAccountName);
 
         closeBankAccountPanel();
         document.styleSheets[1].deleteRule(cssRuleIndex);
@@ -152,13 +154,13 @@ var retrieveAccountBalanceAndAddColorCoding = function (balance) {
 
         var balanceNotification;
         if (balance > accountBalance) {
-            balanceNotification = "Account balance too low for budget needs. Danger! Maybe bank transactions just need to be categorized?";
+            balanceNotification = "Account balance too low for budget needs. Danger! Have you configured you Bank Account Name in the extension settings? Maybe bank transactions just need to be categorized?";
             accountBalanceElement.setAttribute("style", "color: red;");
         } else if (balance == accountBalance) {
             balanceNotification = "Account balance matches budget needs. All Good.";
             accountBalanceElement.setAttribute("style", "color: green;");
         } else {
-            balanceNotification = "Account balance below budget needs. Maybe transactions haven't hit the bank yet?";
+            balanceNotification = "Account balance too high for budget needs. Maybe transactions haven't hit the bank yet?";
             accountBalanceElement.setAttribute("style", "color: orange;");
         }
 
@@ -185,7 +187,7 @@ var displayBudgetNeedsBalance = function (balance) {
 };
 
 
-var calculateAndDisplayBalance = function () {
+var calculateAndDisplayBudgetNeedsBalance = function () {
     if (!elementExistsOnPage(budgetPageElement)) {
         return;
     }
@@ -205,26 +207,36 @@ var calculateAndDisplayBalance = function () {
     }
 };
 
-var syncSettingsAndExecuteCalculations = function() {
-    chrome.storage.sync.get("excludedCategories", function(data) {
-        var excludedCategoriesListString = data["excludedCategories"];
+var setExcludedCategories = function(excludedCategoriesListString) {
+    excludedCategories = [];
+    if (excludedCategoriesListString) {
+        console.log("Setting excludedCategories with value: " + excludedCategoriesListString);
 
-        excludedCategories = [];
-        if (excludedCategoriesListString) {
-            console.log("Setting excludedCategories with value:" + excludedCategoriesListString);
-
-            if (excludedCategoriesListString.includes(",")) {
-                excludedCategories = excludedCategoriesListString.split(",").map((category) => {
-                    return category.trim();
-                });
-            } else {
-                excludedCategories.push(excludedCategoriesListString.trim());
-            }
+        if (excludedCategoriesListString.includes(",")) {
+            excludedCategories = excludedCategoriesListString.split(",").map((category) => {
+                return category.trim();
+            });
+        } else {
+            excludedCategories.push(excludedCategoriesListString.trim());
         }
+    }
 
-        console.log("Excluded Categories: " + excludedCategories);
+    console.log("Excluded Categories: " + excludedCategories);
+};
 
-        calculateAndDisplayBalance();
+var setBankAccountName = function (bankAccountNameSettingData) {
+    if (bankAccountNameSettingData) {
+        console.log("Setting bankAccountName with value: " + bankAccountNameSettingData);
+        bankAccountName = bankAccountNameSettingData.trim();
+    }
+};
+
+var syncSettingsAndExecuteCalculations = function() {
+    chrome.storage.sync.get(settingKeys, function(data) {
+        setExcludedCategories(data["excludedCategories"]);
+        setBankAccountName(data["bankAccountName"]);
+
+        calculateAndDisplayBudgetNeedsBalance();
     });
 };
 
