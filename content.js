@@ -46,7 +46,7 @@ var bankAccountElements = function() {
     return document.querySelectorAll(".BankAccount");
 };
 
-var retreiveAccountBalance = function (accountName) {
+var retreiveAccountBalanceFromModal = function (accountName) {
     console.log("Retrieving account balance for account: " + accountName);
     var bankElements = bankAccountElements();
 
@@ -65,24 +65,19 @@ var retreiveAccountBalance = function (accountName) {
     return accountBalance;
 };
 
-var colorCodeBankAccountBalanceCalculation = function (balance) {
+var retrieveAccountBalance = function (balance, callback) {
     console.log("Color coding the account balance calculation.");
 
     var cssRuleIndex = document.styleSheets[1].insertRule(".ReactModalPortal { display: none !important; }");
     openBankAccountPanel();
 
     executeAfterElementLoaded(bankAccountElements, function() {
-        var accountBalance = retreiveAccountBalance("Interest Checking");
-
-        if (balance > accountBalance) {
-            console.log("Account balance too low for budget.  Danger.");
-            document.querySelector(".extensions-AccountBalance .BudgetOverviewList-value").setAttribute("style", "color: red;");
-        } else {
-            console.log("Account balance sufficient for budget.  All Good.");
-        }
+        var accountBalance = retreiveAccountBalanceFromModal("Interest Checking");
 
         closeBankAccountPanel();
         document.styleSheets[1].deleteRule(cssRuleIndex);
+
+        callback(accountBalance);
     });
 };
 
@@ -150,7 +145,29 @@ var accountBalanceHtml = function (balance) {
         '</div>';
 };
 
-var displayBankAccountCalculation = function (balance) {
+var retrieveAccountBalanceAndAddColorCoding = function (balance) {
+    retrieveAccountBalance(balance, function(accountBalance) {
+        // After We know the balance, lets color code it for easy spotting and provide a tooltip
+        var accountBalanceElement = document.querySelector(".extensions-AccountBalance .BudgetOverviewList-value");
+
+        var balanceNotification;
+        if (balance > accountBalance) {
+            balanceNotification = "Account balance too low for budget needs. Danger! Maybe bank transactions just need to be categorized?";
+            accountBalanceElement.setAttribute("style", "color: red;");
+        } else if (balance == accountBalance) {
+            balanceNotification = "Account balance matches budget needs. All Good.";
+            accountBalanceElement.setAttribute("style", "color: green;");
+        } else {
+            balanceNotification = "Account balance below budget needs. Maybe transactions haven't hit the bank yet?";
+            accountBalanceElement.setAttribute("style", "color: orange;");
+        }
+
+        console.log(balanceNotification);
+        accountBalanceElement.setAttribute("title", balanceNotification);
+    });
+};
+
+var displayBudgetNeedsBalance = function (balance) {
     var balanceStr = "Injecting balance calculation html into page.";
 
     console.log(balanceStr);
@@ -163,7 +180,8 @@ var displayBankAccountCalculation = function (balance) {
     }
 
     document.querySelector(".extensions-AccountBalance-refreshLink").addEventListener("click", syncSettingsAndExecuteCalculations);
-    colorCodeBankAccountBalanceCalculation(balance);
+
+    retrieveAccountBalanceAndAddColorCoding(balance);
 };
 
 
@@ -180,7 +198,7 @@ var calculateAndDisplayBalance = function () {
 
     var balance = calculateBudgetNeedsBalance();
 
-    displayBankAccountCalculation(balance);
+    displayBudgetNeedsBalance(balance);
 
     if (displayedValuesSwitched) {
         document.querySelector(".BudgetItemRow-swappableColumn").click();
