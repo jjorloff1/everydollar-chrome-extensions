@@ -1,12 +1,7 @@
-console.log("Running Content Script.");
+console.log("Running extension Content Script.");
 
-// TODO:
-// * Provide the name of bank account in extension panel config panel
-// * trigger automatically on appropriate changes to DOM
-// * dynamically exclude categories or budget items (Emergency Fund, or all of Savings)
-// * trigger when clicking budget navbar after leaving
-// * Don't trigger for past or future months
-
+/* Given a function which would return an element or NodeList, this function indicates
+ * whether that element is displayed on the page */
 var elementExistsOnPage = function (elementFunction) {
     var element = elementFunction();
     if (element == null || (element instanceof NodeList && element.length == 0)) {
@@ -17,7 +12,7 @@ var elementExistsOnPage = function (elementFunction) {
 };
 
 /* This is a timer method to trigger functions once an element has actually loaded on screen */
-var executeAfterElementLoaded = function(elementFunction, callback, wait_time = 100) {
+var executeAfterElementLoaded = function(elementFunction, callback) {
     console.log("Waiting for element to load.");
     var checkExist = setInterval(function () {
         console.log("Checking if element exists.");
@@ -28,9 +23,8 @@ var executeAfterElementLoaded = function(elementFunction, callback, wait_time = 
 
             callback();
         }
-    }, wait_time);
+    }, 100);
 };
-
 
 var openBankAccountPanel = function () {
     console.log("Opening accounts modal invisibly.");
@@ -54,8 +48,6 @@ var retreiveAccountBalance = function (accountName) {
     console.log("Retrieving account balance for account: " + accountName);
     var bankElements = bankAccountElements();
 
-    console.log(bankElements);
-
     var accountBalance = 0.00;
     bankElements.forEach(function(item) {
         var itemAccountName = item.querySelector(".BankAccount-name").innerText;
@@ -70,8 +62,6 @@ var retreiveAccountBalance = function (accountName) {
 
     return accountBalance;
 };
-
-
 
 var colorCodeBankAccountBalanceCalculation = function (balance) {
     console.log("Color coding the account balance calculation.");
@@ -91,38 +81,25 @@ var colorCodeBankAccountBalanceCalculation = function (balance) {
 
         closeBankAccountPanel();
         document.styleSheets[1].deleteRule(cssRuleIndex);
-    }, 5);
+    });
 };
 
-
-var calculateBankBalance = function () {
+var calculateBudgetNeedsBalance = function () {
     var sum = 0.00;
     var allValues = document.querySelectorAll(".money--remaining");
     allValues.forEach(function (item) {
         var value = convertMoneyStringToNumber(item.dataset.text)
         sum += parseFloat(value) * 100;
     });
-    return (sum - 1500000) / 100;
+    return (sum - 1500000) / 100; // TODO: Make the exclusions dynamic
 };
 
 var budgetPageElement = function () {
     return document.querySelector(".Budget-groupsList");
 };
 
-var budgetPageLoaded = function () {
-    return !!budgetPageElement();
-};
-
-var swappableColumnElements = function () {
-    return document.querySelectorAll(".BudgetItemRow-swappableColumn");
-};
-
 var remainingValuesDisplayed = function () {
     return !!document.querySelector(".money--remaining");
-};
-
-var connectedBankAccountBalanceDisplayed = function () {
-    return !!document.querySelector(".BankAccount-balance .money");
 };
 
 var accountBalanceElement = function () {
@@ -153,7 +130,7 @@ var accountBalanceHtml = function (balance) {
 };
 
 var displayBankAccountCalculation = function (balance) {
-    var balanceStr = "Bank account balance must be >= $" + balance;
+    var balanceStr = "Injecting balance calculation html into page.";
 
     console.log(balanceStr);
 
@@ -180,7 +157,7 @@ var calculateAndDisplayBalance = function () {
         displayedValuesSwitched = true;
     }
 
-    var balance = calculateBankBalance();
+    var balance = calculateBudgetNeedsBalance();
 
     displayBankAccountCalculation(balance);
 
@@ -192,8 +169,7 @@ var calculateAndDisplayBalance = function () {
 console.log("Waiting for budget page to load.");
 executeAfterElementLoaded(budgetPageElement, function() {
     console.log("Budget page loaded.  Starting Bank Account Calculation.");
-    calculateAndDisplayBalance();
-
     console.log("Will recalculate every minute.");
     setInterval(calculateAndDisplayBalance, 60000);
+    calculateAndDisplayBalance();
 });

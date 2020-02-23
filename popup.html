@@ -1,12 +1,39 @@
 <html>
 <head>
-<!--  <script src="everydollar-bank-balance.js"></script>-->
+  <title>Popup</title>
+  <style>
+    dt { white-space: nowrap }
+  </style>
+  <script src="popup.js"></script>
 </head>
 <body style="width:400px;">
 <div>
   <h1>Everydollar Chrome Extensions</h1>
   <p>This plugin will calculate the sum of all of your budget categories, including funds, so that you can know how much
   money you need to have in your account at the moment.</p>
+  <div class="extension-Config">
+    <fieldset>
+      <dl>
+        <dt><label for="excludedCategories"
+                   class="extension-Config-excludedCategoriesLabel">
+          Excluded Categories (comma separated)</label></dt>
+
+        <dd><input type="text" disabled="disabled" id="excludedCategories" /></dd>
+      </dl>
+    </fieldset>
+
+  </div>
+  <div>
+    <p>To Do:</p>
+    <ul>
+      <li>Provide the name of bank account in extension panel config panel</li>
+      <li>trigger automatically on appropriate changes to DOM</li>
+      <li>dynamically exclude categories or budget items (Emergency Fund, or all of Savings)</li>
+      <li>trigger when clicking budget navbar after leaving</li>
+    </ul>
+  </div>
+
+
 </div>
 </body>
 </html>
