@@ -86,11 +86,21 @@ var colorCodeBankAccountBalanceCalculation = function (balance) {
     });
 };
 
-var isCategoryExcluded = function(item) {
+var isCategoryExcludedByConfig = function(item) {
     var itemLabel = item.parentElement.parentElement.parentElement.querySelector(".BudgetItem-label");
 
-    console.log("Current excluded categories: " + excludedCategories);
+    console.log("Currently configured excluded categories: " + excludedCategories);
     return excludedCategories.includes(itemLabel.dataset.text);
+};
+
+/* Favorites appear twice on a page so we need to exclude them from calculation. */
+var isCategoryInFavorites = function(item) {
+    var categoryGroupElement = item.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement
+    return categoryGroupElement.classList.contains("Budget-budgetGroup--favorites");
+};
+
+var isCategoryExcluded = function(item) {
+    return isCategoryExcludedByConfig(item) || isCategoryInFavorites(item);
 };
 
 var calculateBudgetNeedsBalance = function () {
