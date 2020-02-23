@@ -18,7 +18,10 @@ document.addEventListener('DOMContentLoaded', function () {
             chrome.storage.sync.get(setting, function(data) {
                 console.log("setting value:" + data[setting]);
                 document.getElementById(setting).disabled = false;
-                document.getElementById(setting).value = data[setting];
+
+                if (data[setting]) {
+                    document.getElementById(setting).value = data[setting];
+                }
             });
         });
     });

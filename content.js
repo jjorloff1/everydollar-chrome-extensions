@@ -179,17 +179,19 @@ var calculateAndDisplayBalance = function () {
 
 var syncSettingsAndExecuteCalculations = function() {
     chrome.storage.sync.get("excludedCategories", function(data) {
-        console.log("Setting excludedCategories with value:" + data["excludedCategories"]);
-
         var excludedCategoriesListString = data["excludedCategories"];
 
         excludedCategories = [];
-        if (excludedCategoriesListString.includes(",")) {
-            excludedCategories = excludedCategoriesListString.split(",").map((category) => {
-                return category.trim();
-            });
-        } else {
-            excludedCategories.push(excludedCategoriesListString.trim());
+        if (excludedCategoriesListString) {
+            console.log("Setting excludedCategories with value:" + excludedCategoriesListString);
+
+            if (excludedCategoriesListString.includes(",")) {
+                excludedCategories = excludedCategoriesListString.split(",").map((category) => {
+                    return category.trim();
+                });
+            } else {
+                excludedCategories.push(excludedCategoriesListString.trim());
+            }
         }
 
         console.log("Excluded Categories: " + excludedCategories);
