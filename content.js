@@ -228,15 +228,23 @@ var colorCodeBalance = function (balanceDifference) {
     accountBalanceElement.setAttribute("title", balanceNotification);
 };
 
+var formatCurrencyOrIndicateFetching = function (currencyNumber) {
+    if (currencyNumber) {
+        return Number(currencyNumber).toLocaleString('en-US', {style: 'currency', currency: 'USD'});
+    } else {
+        return "Fetching...";
+    }
+};
+
 var displayBudgetNeedsAndBalanceDifference = function ({ budgetNeed,
                                                          accountBalance,
                                                          balanceDifference } = {}) {
     console.log("Injecting budget needs and balance difference html into page.");
 
     var params = {
-        budgetNeedFormatted: Number(budgetNeed).toLocaleString('en-US', {style: 'currency', currency: 'USD'}),
-        accountBalanceFormatted: Number(accountBalance).toLocaleString('en-US', {style: 'currency', currency: 'USD'}),
-        balanceDifferenceFormatted: Number(balanceDifference).toLocaleString('en-US', {style: 'currency', currency: 'USD'})
+        budgetNeedFormatted: formatCurrencyOrIndicateFetching(budgetNeed),
+        accountBalanceFormatted: formatCurrencyOrIndicateFetching(accountBalance),
+        balanceDifferenceFormatted: formatCurrencyOrIndicateFetching(balanceDifference)
     };
 
     if (accountBalanceHtmlDisplayed()) {
@@ -262,6 +270,8 @@ var calculateAndDisplayBudgetNeedsBalance = function () {
 
     var budgetNeed = calculateBudgetNeed();
 
+    displayBudgetNeedsAndBalanceDifference({ budgetNeed: budgetNeed });
+
     retrieveAccountBalance(budgetNeed, function(accountBalance) {
         var balanceDifference = calculateBalanceDifference(budgetNeed, accountBalance);
 
@@ -270,8 +280,6 @@ var calculateAndDisplayBudgetNeedsBalance = function () {
             accountBalance: accountBalance,
             balanceDifference: balanceDifference
         });
-
-        addRefreshLinkToNav();
     });
 
     // Switch column back if necessary
@@ -319,6 +327,12 @@ var syncSettingsAndExecuteCalculations = function() {
 
         if (extensionStatus == "enabled") {
             calculateAndDisplayBudgetNeedsBalance();
+        } else {
+            console.log("EveryDollar Extensions disabled.");
+
+            if (accountBalanceHtmlDisplayed()) {
+                accountBalanceElement().remove();
+            }
         }
     });
 };
@@ -326,8 +340,8 @@ var syncSettingsAndExecuteCalculations = function() {
 console.log("Waiting for budget page to load.");
 executeAfterElementLoaded(budgetPageElement, function() {
     console.log("Budget page loaded.  Starting Bank Account Calculation.");
-    // console.log("Will recalculate every minute.");
-    // setInterval(syncSettingsAndExecuteCalculations, 60000);
+
     syncSettingsAndExecuteCalculations();
 
+    addRefreshLinkToNav();
 });
