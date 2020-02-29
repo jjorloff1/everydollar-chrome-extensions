@@ -11,7 +11,7 @@ function settingChanged() {
 
 document.addEventListener('DOMContentLoaded', function () {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        var settings = ["extensionStatus", "excludedCategories", "bankAccountName"];
+        var settings = ["extensionsStatus", "excludedCategories", "bankAccountName"];
         settings.forEach(function(setting) {
             console.log("setting: " + setting);
 
@@ -26,8 +26,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    var extensionStatus = document.querySelector('#extensionStatus');
-    extensionStatus.addEventListener("change", settingChanged);
+    var extensionsStatus = document.querySelector('#extensionsStatus');
+    extensionsStatus.addEventListener("change", settingChanged);
 
     var excludedCategories = document.querySelector('#excludedCategories');
     excludedCategories.addEventListener("change", settingChanged);

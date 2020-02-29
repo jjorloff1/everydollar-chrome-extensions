@@ -2,6 +2,9 @@
 <head>
   <title>Popup</title>
   <style>
+    body {
+      padding: 1rem;
+    }
     fieldset {
       border: none;
     }
@@ -29,18 +32,19 @@
 </head>
 <body style="width:400px;">
 <div>
-  <h1>Everydollar Chrome Extensions</h1>
+  <img src="everydollar-8f02ea.svg" />
+  <h1>Chrome Extensions</h1>
   <p>This plugin will calculate the sum of all of your budget categories, including funds, so that you can know how much
   money you need to have in your account at the moment.</p>
   <div class="extension-Config">
-    <h2>Extension Config</h2>
+    <h2>Extensions Config</h2>
     <fieldset>
       <dl>
         <dt>
-          Extension Status (req &#10227;)
+          Extensions Status (req &#10227;)
         </dt>
         <dd>
-          <select id="extensionStatus" name="extensionStatus">
+          <select id="extensionsStatus" name="extensionsStatus">
             <option value="enabled" selected>Enabled</option>
             <option value="disabled">Disabled</option>
           </select>
@@ -64,10 +68,8 @@
   <div>
     <h2>To Do:</h2>
     <ul>
-      <li>trigger automatically on appropriate changes to DOM</li>
-      <li>trigger when clicking budget navbar after leaving</li>
+      <li>trigger automatically on appropriate changes to DOM or on month selection</li>
       <li>include pending transactions?</li>
-      <li>Style config html</li>
     </ul>
   </div>
 

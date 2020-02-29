@@ -1,7 +1,7 @@
 console.log("Running extension Content Script.");
 
-const settingKeys = ["extensionStatus", "excludedCategories", "bankAccountName"];
-var extensionStatus;
+const settingKeys = ["extensionsStatus", "excludedCategories", "bankAccountName"];
+var extensionsStatus;
 var excludedCategories;
 var bankAccountName;
 
@@ -289,10 +289,10 @@ var calculateAndDisplayBudgetNeedsBalance = function () {
     }
 };
 
-var setExtensionStatus = function (extensionStatusSettingData) {
-    if (extensionStatusSettingData) {
-        console.log("Setting extensionStatus with value: " + extensionStatusSettingData);
-        extensionStatus = extensionStatusSettingData.trim();
+var setExtensionsStatus = function (extensionsStatusSettingData) {
+    if (extensionsStatusSettingData) {
+        console.log("Setting extensionsStatus with value: " + extensionsStatusSettingData);
+        extensionsStatus = extensionsStatusSettingData.trim();
     }
 };
 
@@ -322,11 +322,11 @@ var setBankAccountName = function (bankAccountNameSettingData) {
 
 var syncSettingsAndExecuteCalculations = function() {
     chrome.storage.sync.get(settingKeys, function(data) {
-        setExtensionStatus(data["extensionStatus"]);
+        setExtensionsStatus(data["extensionsStatus"]);
         setExcludedCategories(data["excludedCategories"]);
         setBankAccountName(data["bankAccountName"]);
 
-        if (extensionStatus != "disabled") {
+        if (extensionsStatus != "disabled") {
             calculateAndDisplayBudgetNeedsBalance();
         } else {
             console.log("EveryDollar Extensions disabled.");

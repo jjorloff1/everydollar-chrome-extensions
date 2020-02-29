@@ -2,6 +2,9 @@
   "manifest_version": 2,
   "name": "EveryDollar Extensions",
   "version": "0.1",
+  "icons": {
+    "32": "everydollar-32x32.png"
+  },
   "browser_action": {
     "default_popup": "popup.html"
   },
