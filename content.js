@@ -100,7 +100,7 @@ var isCategoryExcluded = function(item) {
     return isCategoryExcludedByConfig(item) || isCategoryInFavorites(item);
 };
 
-var calculateBudgetNeedsBalance = function () {
+var calculateBudgetNeed = function () {
     var sum = 0.00;
     var allValues = document.querySelectorAll(".money--remaining");
     allValues.forEach(function (item) {
@@ -110,6 +110,10 @@ var calculateBudgetNeedsBalance = function () {
         }
     });
     return sum / 100;
+};
+
+var calculateBalanceDifference = function (budgetNeed, accountBalance) {
+    return accountBalance - budgetNeed;
 };
 
 var budgetPageElement = function () {
@@ -128,8 +132,7 @@ var accountBalanceHtmlDisplayed = function () {
     return !!accountBalanceElement();
 };
 
-var accountBalanceHtml = function (balance) {
-    var balanceFormatted = Number(balance).toLocaleString('en-US', {style: 'currency', currency: 'USD'});
+var accountBalanceHtml = function (balanceFormatted) {
     return '<div class="extensions-AccountBalance">\n' +
         '  <ul class="BudgetOverviewList list-block BudgetOverview-list">\n' +
         '    <li class="BudgetOverviewList-item list-item small ui-content">\n' +
@@ -147,45 +150,74 @@ var accountBalanceHtml = function (balance) {
         '</div>';
 };
 
-var retrieveAccountBalanceAndAddColorCoding = function (balance) {
-    retrieveAccountBalance(balance, function(accountBalance) {
-        // After We know the balance, lets color code it for easy spotting and provide a tooltip
-        var accountBalanceElement = document.querySelector(".extensions-AccountBalance .BudgetOverviewList-value");
-
-        var balanceNotification;
-        if (balance > accountBalance) {
-            balanceNotification = "Account balance too low for budget needs. Danger! Have you configured you Bank Account Name in the extension settings? Maybe bank transactions just need to be categorized?";
-            accountBalanceElement.setAttribute("style", "color: red;");
-        } else if (balance == accountBalance) {
-            balanceNotification = "Account balance matches budget needs. All Good.";
-            accountBalanceElement.setAttribute("style", "color: green;");
-        } else {
-            balanceNotification = "Account balance too high for budget needs. Maybe transactions haven't hit the bank yet?";
-            accountBalanceElement.setAttribute("style", "color: orange;");
-        }
-
-        console.log(balanceNotification);
-        accountBalanceElement.setAttribute("title", balanceNotification);
-    });
+var accountBalanceHtml = function (budgetNeedFormatted, balanceDifferenceFormatted) {
+    return '<div class="extensions-AccountBalance">\n' +
+        '  <ul class="BudgetOverviewList list-block BudgetOverview-list">\n' +
+        '    <li class="BudgetOverviewList-item list-item small ui-content">\n' +
+        '      <div class="ui-flex-row">\n' +
+        '        <div class="BudgetOverviewList-label ui-flex-column-6" data-text="Balance Needed">Budget Need</div>\n' +
+        '        <div class="BudgetOverviewList-value ui-flex-column-4 ui-flex-column--column text--right" ' +
+        '             data-text="' + budgetNeedFormatted + '">' + budgetNeedFormatted + '\n' +
+        '        </div>\n' +
+        '        <div class="extensions-AccountBalance-refresh ui-flex-column-2 ui-flex-column--column text--right" data-text="Refresh">\n' +
+        '          <a class="extensions-AccountBalance-refreshLink"><strong>&#10227;</strong></a>\n' +
+        '        </div>\n' +
+        '      </div>\n' +
+        '    </li>\n' +
+        '    <li class="BudgetOverviewList-item list-item small ui-content">\n' +
+        '      <div class="ui-flex-row">\n' +
+        '        <div class="BudgetOverviewList-label ui-flex-column-6" data-text="Balance Needed">Balance Difference</div>\n' +
+        '        <div class="BudgetOverviewList-value ui-flex-column-4 ui-flex-column--column text--right" ' +
+        '             data-text="' + balanceDifferenceFormatted + '">' + balanceDifferenceFormatted + '\n' +
+        '        </div>\n' +
+        '        <div class="extensions-AccountBalance-refresh ui-flex-column-2 ui-flex-column--column text--right" data-text="Refresh">\n' +
+        '        </div>\n' +
+        '      </div>\n' +
+        '    </li>\n' +
+        '  </ul>\n' +
+        '</div>';
 };
 
-var displayBudgetNeedsBalance = function (balance) {
-    var balanceStr = "Injecting balance calculation html into page.";
+var colorCodeBalance = function (balanceDifference) {
+    // After We know the balance difference, lets color code it for easy spotting and provide a tooltip
+    var accountBalanceElement = document.querySelector(".extensions-AccountBalance .BudgetOverviewList-value");
 
-    console.log(balanceStr);
-
-    if (accountBalanceHtmlDisplayed()) {
-        accountBalanceElement().outerHTML = accountBalanceHtml(balance)
+    var balanceNotification;
+    var color;
+    if (balanceDifference < 0) {
+        balanceNotification = "Account balance too low for budget needs. Danger! Have you configured you Bank Account Name in the extension settings? Maybe bank transactions just need to be categorized?";
+        color = "red";
+    } else if (balanceDifference == 0) {
+        balanceNotification = "Account balance matches budget needs. All Good.";
+        color = "green";
     } else {
-        var sidebar = document.querySelector(".ui-app-budget-details");
-        sidebar.insertAdjacentHTML("afterbegin", accountBalanceHtml(balance));
+        balanceNotification = "Account balance too high for budget needs. Maybe transactions haven't hit the bank yet?";
+        color = "orange";
     }
 
-    document.querySelector(".extensions-AccountBalance-refreshLink").addEventListener("click", syncSettingsAndExecuteCalculations);
+    accountBalanceElement.setAttribute("style", "color: " + color + ";");
 
-    retrieveAccountBalanceAndAddColorCoding(balance);
+    console.log(balanceNotification);
+    accountBalanceElement.setAttribute("title", balanceNotification);
 };
 
+var displayBudgetNeedsAndBalanceDifference = function (budgetNeed, balanceDifference) {
+    console.log("Injecting budget needs and balance difference html into page.");
+
+    var budgetNeedFormatted = Number(budgetNeed).toLocaleString('en-US', {style: 'currency', currency: 'USD'});
+    var balanceDifferenceFormatted = Number(balanceDifference).toLocaleString('en-US', {style: 'currency', currency: 'USD'});
+
+    // var balanceString = generateBalanceString(budgetNeed, balanceDifference);
+
+    if (accountBalanceHtmlDisplayed()) {
+        accountBalanceElement().outerHTML = accountBalanceHtml(budgetNeedFormatted, balanceDifferenceFormatted)
+    } else {
+        var sidebar = document.querySelector(".ui-app-budget-details");
+        sidebar.insertAdjacentHTML("afterbegin", accountBalanceHtml(budgetNeedFormatted, balanceDifferenceFormatted));
+    }
+
+    colorCodeBalance(balanceDifference);
+};
 
 var calculateAndDisplayBudgetNeedsBalance = function () {
     if (!elementExistsOnPage(budgetPageElement)) {
@@ -198,10 +230,19 @@ var calculateAndDisplayBudgetNeedsBalance = function () {
         displayedValuesSwitched = true;
     }
 
-    var balance = calculateBudgetNeedsBalance();
+    var budgetNeed = calculateBudgetNeed();
 
-    displayBudgetNeedsBalance(balance);
+    retrieveAccountBalance(budgetNeed, function(accountBalance) {
+        var balanceDifference = calculateBalanceDifference(budgetNeed, accountBalance);
 
+        // displayBudgetNeedsBalance(budgetNeed);
+        displayBudgetNeedsAndBalanceDifference(budgetNeed, balanceDifference);
+
+        // Set up refresh button
+        document.querySelector(".extensions-AccountBalance-refreshLink").addEventListener("click", syncSettingsAndExecuteCalculations);
+    });
+
+    // Switch column back if necessary
     if (displayedValuesSwitched) {
         document.querySelector(".BudgetItemRow-swappableColumn").click();
     }
