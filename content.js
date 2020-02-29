@@ -186,7 +186,8 @@ var refreshLinkHtml = function () {
     return '<li>\n' +
         '    <a class="extensions-Navbar-balanceRefreshLink Navbar-item"' +
         '       title="Refresh account balance calculation">\n' +
-        '        <strong>&#10227;</strong>\n' +
+        '        <span class="Navbar-icon"><strong>&#10227;</strong></span>\n' +
+        '        <span class="Navbar-iconTitle">E$ Extensions</span>'
         '    </a>\n' +
         '</li>';
 };
