@@ -132,17 +132,40 @@ var accountBalanceHtmlDisplayed = function () {
     return !!accountBalanceElement();
 };
 
-var accountBalanceHtml = function (balanceFormatted) {
+var accountBalanceHtml = function ({ budgetNeedFormatted,
+                                     accountBalanceFormatted,
+                                     balanceDifferenceFormatted } = {}) {
     return '<div class="extensions-AccountBalance">\n' +
         '  <ul class="BudgetOverviewList list-block BudgetOverview-list">\n' +
         '    <li class="BudgetOverviewList-item list-item small ui-content">\n' +
         '      <div class="ui-flex-row">\n' +
-        '        <div class="BudgetOverviewList-label ui-flex-column-6" data-text="Balance Needed">Balance Needed</div>\n' +
-        '        <div class="BudgetOverviewList-value ui-flex-column-4 ui-flex-column--column text--right" ' +
-        '             data-text="' + balanceFormatted + '">' + balanceFormatted + '\n' +
+        '        <div class="BudgetOverviewList-label ui-flex-column-6" data-text="Balance Needed">Budget Need</div>\n' +
+        '        <div class="ui-flex-column-2 ui-flex-column--column text--right" data-text="Refresh">\n' +
         '        </div>\n' +
-        '        <div class="extensions-AccountBalance-refresh ui-flex-column-2 ui-flex-column--column text--right" data-text="Refresh">\n' +
-        '          <a class="extensions-AccountBalance-refreshLink"><strong>&#10227;</strong></a>\n' +
+        '        <div class="BudgetOverviewList-value ui-flex-column-4 ui-flex-column--column text--right" ' +
+        '             data-text="' + budgetNeedFormatted + '">' + budgetNeedFormatted + '\n' +
+        '        </div>\n' +
+        '      </div>\n' +
+        '    </li>\n' +
+        '    <li class="BudgetOverviewList-item list-item small ui-content">\n' +
+        '      <div class="ui-flex-row">\n' +
+        '        <div class="BudgetOverviewList-label ui-flex-column-6" data-text="Account Balance">Account Balance' +
+        '        </div>\n' +
+        '        <div class="ui-flex-column-2 ui-flex-column--column text--right" data-text="Refresh">\n' +
+        '        </div>\n' +
+        '        <div class="BudgetOverviewList-value ui-flex-column-4 ui-flex-column--column text--right" ' +
+        '             data-text="' + accountBalanceFormatted + '">' + accountBalanceFormatted + '\n' +
+        '        </div>\n' +
+        '      </div>\n' +
+        '    </li>\n' +
+        '    <li class="BudgetOverviewList-item list-item small ui-content">\n' +
+        '      <div class="ui-flex-row">\n' +
+        '        <div class="BudgetOverviewList-label ui-flex-column-6" data-text="Balance Difference">Balance Difference' +
+        '        </div>\n' +
+        '        <div class="ui-flex-column-2 ui-flex-column--column text--right" data-text="Refresh">\n' +
+        '        </div>\n' +
+        '        <div class="BudgetOverviewList-value ui-flex-column-4 ui-flex-column--column text--right" ' +
+        '             data-text="' + balanceDifferenceFormatted + '">' + balanceDifferenceFormatted + '\n' +
         '        </div>\n' +
         '      </div>\n' +
         '    </li>\n' +
@@ -150,32 +173,35 @@ var accountBalanceHtml = function (balanceFormatted) {
         '</div>';
 };
 
-var accountBalanceHtml = function (budgetNeedFormatted, balanceDifferenceFormatted) {
-    return '<div class="extensions-AccountBalance">\n' +
-        '  <ul class="BudgetOverviewList list-block BudgetOverview-list">\n' +
-        '    <li class="BudgetOverviewList-item list-item small ui-content">\n' +
-        '      <div class="ui-flex-row">\n' +
-        '        <div class="BudgetOverviewList-label ui-flex-column-6" data-text="Balance Needed">Budget Need</div>\n' +
-        '        <div class="BudgetOverviewList-value ui-flex-column-4 ui-flex-column--column text--right" ' +
-        '             data-text="' + budgetNeedFormatted + '">' + budgetNeedFormatted + '\n' +
-        '        </div>\n' +
-        '        <div class="extensions-AccountBalance-refresh ui-flex-column-2 ui-flex-column--column text--right" data-text="Refresh">\n' +
-        '          <a class="extensions-AccountBalance-refreshLink"><strong>&#10227;</strong></a>\n' +
-        '        </div>\n' +
-        '      </div>\n' +
-        '    </li>\n' +
-        '    <li class="BudgetOverviewList-item list-item small ui-content">\n' +
-        '      <div class="ui-flex-row">\n' +
-        '        <div class="BudgetOverviewList-label ui-flex-column-6" data-text="Balance Needed">Balance Difference</div>\n' +
-        '        <div class="BudgetOverviewList-value ui-flex-column-4 ui-flex-column--column text--right" ' +
-        '             data-text="' + balanceDifferenceFormatted + '">' + balanceDifferenceFormatted + '\n' +
-        '        </div>\n' +
-        '        <div class="extensions-AccountBalance-refresh ui-flex-column-2 ui-flex-column--column text--right" data-text="Refresh">\n' +
-        '        </div>\n' +
-        '      </div>\n' +
-        '    </li>\n' +
-        '  </ul>\n' +
-        '</div>';
+var refreshLinkElement = function () {
+    return document.querySelector(".extensions-Navbar-balanceRefreshLink");
+};
+
+var refreshLinkElementDisplayed = function () {
+    return !!refreshLinkElement();
+};
+
+var refreshLinkHtml = function () {
+    return '<li>\n' +
+        '    <a class="extensions-Navbar-balanceRefreshLink Navbar-item"' +
+        '       title="Refresh account balance calculation">\n' +
+        '        <strong>⟳</strong>\n' +
+        '    </a>\n' +
+        '</li>';
+};
+
+var addRefreshLinkToNav = function() {
+    if (refreshLinkElementDisplayed()) {
+        console.log("Refresh link already on navbar.")
+        return;
+    }
+
+    console.log("Adding refresh link to Navbar.");
+
+    var navBarListElement = document.querySelector(".Navbar-content .list-block");
+    navBarListElement.insertAdjacentHTML("beforeend", refreshLinkHtml());
+
+    refreshLinkElement().addEventListener("click", syncSettingsAndExecuteCalculations);
 };
 
 var colorCodeBalance = function (balanceDifference) {
@@ -201,19 +227,22 @@ var colorCodeBalance = function (balanceDifference) {
     accountBalanceElement.setAttribute("title", balanceNotification);
 };
 
-var displayBudgetNeedsAndBalanceDifference = function (budgetNeed, balanceDifference) {
+var displayBudgetNeedsAndBalanceDifference = function ({ budgetNeed,
+                                                         accountBalance,
+                                                         balanceDifference } = {}) {
     console.log("Injecting budget needs and balance difference html into page.");
 
-    var budgetNeedFormatted = Number(budgetNeed).toLocaleString('en-US', {style: 'currency', currency: 'USD'});
-    var balanceDifferenceFormatted = Number(balanceDifference).toLocaleString('en-US', {style: 'currency', currency: 'USD'});
-
-    // var balanceString = generateBalanceString(budgetNeed, balanceDifference);
+    var params = {
+        budgetNeedFormatted: Number(budgetNeed).toLocaleString('en-US', {style: 'currency', currency: 'USD'}),
+        accountBalanceFormatted: Number(accountBalance).toLocaleString('en-US', {style: 'currency', currency: 'USD'}),
+        balanceDifferenceFormatted: Number(balanceDifference).toLocaleString('en-US', {style: 'currency', currency: 'USD'})
+    };
 
     if (accountBalanceHtmlDisplayed()) {
-        accountBalanceElement().outerHTML = accountBalanceHtml(budgetNeedFormatted, balanceDifferenceFormatted)
+        accountBalanceElement().outerHTML = accountBalanceHtml(params)
     } else {
         var sidebar = document.querySelector(".ui-app-budget-details");
-        sidebar.insertAdjacentHTML("afterbegin", accountBalanceHtml(budgetNeedFormatted, balanceDifferenceFormatted));
+        sidebar.insertAdjacentHTML("afterbegin", accountBalanceHtml(params));
     }
 
     colorCodeBalance(balanceDifference);
@@ -235,11 +264,13 @@ var calculateAndDisplayBudgetNeedsBalance = function () {
     retrieveAccountBalance(budgetNeed, function(accountBalance) {
         var balanceDifference = calculateBalanceDifference(budgetNeed, accountBalance);
 
-        // displayBudgetNeedsBalance(budgetNeed);
-        displayBudgetNeedsAndBalanceDifference(budgetNeed, balanceDifference);
+        displayBudgetNeedsAndBalanceDifference({
+            budgetNeed: budgetNeed,
+            accountBalance: accountBalance,
+            balanceDifference: balanceDifference
+        });
 
-        // Set up refresh button
-        document.querySelector(".extensions-AccountBalance-refreshLink").addEventListener("click", syncSettingsAndExecuteCalculations);
+        addRefreshLinkToNav();
     });
 
     // Switch column back if necessary
