@@ -325,7 +325,7 @@ var syncSettingsAndExecuteCalculations = function() {
         setExcludedCategories(data["excludedCategories"]);
         setBankAccountName(data["bankAccountName"]);
 
-        if (extensionStatus == "enabled") {
+        if (extensionStatus != "disabled") {
             calculateAndDisplayBudgetNeedsBalance();
         } else {
             console.log("EveryDollar Extensions disabled.");
