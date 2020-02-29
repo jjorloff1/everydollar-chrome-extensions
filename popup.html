@@ -2,7 +2,28 @@
 <head>
   <title>Popup</title>
   <style>
-    dt { white-space: nowrap }
+    fieldset {
+      border: none;
+    }
+    dl {
+      display: flex;
+      justify-content: space-between;
+    }
+    dt {
+      white-space: nowrap;
+      padding-bottom: .5rem;
+    }
+    dd {
+      margin-inline-start: 0;
+      padding-bottom: .5rem;
+    }
+    dd input {
+      width: 13rem;
+    }
+    dd select {
+      width: 13rem;
+    }
+
   </style>
   <script src="popup.js"></script>
 </head>
@@ -12,11 +33,23 @@
   <p>This plugin will calculate the sum of all of your budget categories, including funds, so that you can know how much
   money you need to have in your account at the moment.</p>
   <div class="extension-Config">
+    <h2>Extension Config</h2>
     <fieldset>
+      <dl>
+        <dt>
+          Extension Status (req &#10227;)
+        </dt>
+        <dd>
+          <select id="extensionStatus" name="extensionStatus">
+            <option value="enabled" selected>Enabled</option>
+            <option value="disabled">Disabled</option>
+          </select>
+        </dd>
+      </dl>
       <dl>
         <dt><label for="excludedCategories"
                    class="extension-Config-excludedCategoriesLabel">
-          Excluded Categories (comma separated)</label></dt>
+          Excluded Categories (CSV)</label></dt>
 
         <dd><input type="text" disabled="disabled" id="excludedCategories" /></dd>
       </dl>
@@ -29,11 +62,12 @@
 
   </div>
   <div>
-    <p>To Do:</p>
+    <h2>To Do:</h2>
     <ul>
       <li>trigger automatically on appropriate changes to DOM</li>
       <li>trigger when clicking budget navbar after leaving</li>
       <li>include pending transactions?</li>
+      <li>Style config html</li>
     </ul>
   </div>
 

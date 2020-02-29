@@ -1,6 +1,7 @@
 console.log("Running extension Content Script.");
 
-const settingKeys = ["excludedCategories", "bankAccountName"];
+const settingKeys = ["extensionStatus", "excludedCategories", "bankAccountName"];
+var extensionStatus;
 var excludedCategories;
 var bankAccountName;
 
@@ -185,7 +186,7 @@ var refreshLinkHtml = function () {
     return '<li>\n' +
         '    <a class="extensions-Navbar-balanceRefreshLink Navbar-item"' +
         '       title="Refresh account balance calculation">\n' +
-        '        <strong>⟳</strong>\n' +
+        '        <strong>&#10227;</strong>\n' +
         '    </a>\n' +
         '</li>';
 };
@@ -279,6 +280,13 @@ var calculateAndDisplayBudgetNeedsBalance = function () {
     }
 };
 
+var setExtensionStatus = function (extensionStatusSettingData) {
+    if (extensionStatusSettingData) {
+        console.log("Setting extensionStatus with value: " + extensionStatusSettingData);
+        extensionStatus = extensionStatusSettingData.trim();
+    }
+};
+
 var setExcludedCategories = function(excludedCategoriesListString) {
     excludedCategories = [];
     if (excludedCategoriesListString) {
@@ -305,18 +313,21 @@ var setBankAccountName = function (bankAccountNameSettingData) {
 
 var syncSettingsAndExecuteCalculations = function() {
     chrome.storage.sync.get(settingKeys, function(data) {
+        setExtensionStatus(data["extensionStatus"]);
         setExcludedCategories(data["excludedCategories"]);
         setBankAccountName(data["bankAccountName"]);
 
-        calculateAndDisplayBudgetNeedsBalance();
+        if (extensionStatus == "enabled") {
+            calculateAndDisplayBudgetNeedsBalance();
+        }
     });
 };
 
 console.log("Waiting for budget page to load.");
 executeAfterElementLoaded(budgetPageElement, function() {
     console.log("Budget page loaded.  Starting Bank Account Calculation.");
-    console.log("Will recalculate every minute.");
-    setInterval(syncSettingsAndExecuteCalculations, 60000);
+    // console.log("Will recalculate every minute.");
+    // setInterval(syncSettingsAndExecuteCalculations, 60000);
     syncSettingsAndExecuteCalculations();
 
 });
