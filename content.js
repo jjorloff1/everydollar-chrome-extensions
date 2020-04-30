@@ -101,15 +101,38 @@ var isCategoryExcluded = function(item) {
     return isCategoryExcludedByConfig(item) || isCategoryInFavorites(item);
 };
 
+var calculateBudgetNeedForBudgetItem = function(item) {
+    if(isCategoryExcluded(item)) {
+        return 0;
+    }
+
+    var value = convertMoneyStringToNumber(item.dataset.text)
+    return  parseFloat(value) * 100;
+};
+
+var calculateBudgetNeedForDebtItem = function(item) {
+    var itemPlanned = item.querySelector(".BudgetItemRow-input--amountBudgeted");
+    var itemPaidSoFar = item.querySelector(".money.BudgetItem-secondColumn:not(.money--balance)");
+    if(isCategoryExcluded(itemPaidSoFar)) {
+        return 0;
+    }
+
+    var valuePlanned = convertMoneyStringToNumber(itemPlanned.value);
+    var valuePaidSoFar = convertMoneyStringToNumber(itemPaidSoFar.dataset.text);
+    return parseFloat(valuePlanned) * 100 - (parseFloat(valuePaidSoFar) * 100);
+}
+
 var calculateBudgetNeed = function () {
     var sum = 0.00;
+
+    // Calculater budget need for regular budget items that tell us how much is remaining
     var allValues = document.querySelectorAll(".money--remaining");
-    allValues.forEach(function (item) {
-        if(!isCategoryExcluded(item)) {
-            var value = convertMoneyStringToNumber(item.dataset.text)
-            sum += parseFloat(value) * 100;
-        }
-    });
+    allValues.forEach((item) => sum += calculateBudgetNeedForBudgetItem(item));
+
+    // Calculate budget need for debts, which have a different layout
+    var allDebts = document.querySelectorAll(".Budget-budgetGroup--debt .BudgetItemRow");
+    allDebts.forEach((item) => sum += calculateBudgetNeedForDebtItem(item));
+
     return sum / 100;
 };
 
