@@ -253,7 +253,7 @@ var colorCodeBalance = function (balanceDifference) {
 };
 
 var formatCurrencyOrIndicateFetching = function (currencyNumber) {
-    if (currencyNumber) {
+    if (currencyNumber != null) {
         return Number(currencyNumber).toLocaleString('en-US', {style: 'currency', currency: 'USD'});
     } else {
         return "Fetching...";
