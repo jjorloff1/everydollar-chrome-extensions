@@ -1,5 +1,5 @@
 # EveryDollar Chrome Extensions
-Note: This plugin is not supported or endorsed by EveryDollar or Ramsey Solutions in any way.  This plugin has no warranty.  Use at your own risk.
+**WARNING: This plugin is not supported or endorsed by EveryDollar or Ramsey Solutions in any way.  This plugin has no warranty.  Use at your own risk.**
 
 The purpose of this chrome extension is to help you ensure that you have enough cash in your bank account to fulfil your budget needs. It will calculate the total amount of money required to satisfy your current budget and compare it against a given account.
 
