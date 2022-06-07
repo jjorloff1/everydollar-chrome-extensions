@@ -33,7 +33,7 @@ var executeAfterElementLoaded = function(elementFunction, callback) {
 
 var openBankAccountPanel = function () {
     console.log("Opening accounts modal invisibly.");
-    document.querySelector("#IconTray_accounts").click();
+    document.querySelector(".AccountIcon").click();
 };
 
 var closeBankAccountPanel = function () {
@@ -274,7 +274,7 @@ var displayBudgetNeedsAndBalanceDifference = function ({ budgetNeed,
     if (accountBalanceHtmlDisplayed()) {
         accountBalanceElement().outerHTML = accountBalanceHtml(params)
     } else {
-        var sidebar = document.querySelector(".ui-app-budget-details");
+        var sidebar = document.querySelector(".OperationsPanel");
         sidebar.insertAdjacentHTML("afterbegin", accountBalanceHtml(params));
     }
 
