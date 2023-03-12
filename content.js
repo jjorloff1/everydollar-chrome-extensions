@@ -112,7 +112,7 @@ var calculateBudgetNeedForBudgetItem = function(item) {
 
 var calculateBudgetNeedForDebtItem = function(item) {
     var itemPlanned = item.querySelector(".BudgetItemRow-input--amountBudgeted");
-    var itemPaidSoFar = item.querySelector(".money.BudgetItem-secondColumn:not(.money--balance)");
+    var itemPaidSoFar = item.querySelector(".BudgetItemRow-column:has(.BudgetItemRow-input--amountBudgeted) + .BudgetItemRow-column:has(.money.BudgetItem-secondColumn)").querySelector(".money.BudgetItem-secondColumn");
     if(isCategoryExcluded(itemPaidSoFar)) {
         return 0;
     }
