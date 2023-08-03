@@ -93,7 +93,7 @@ var isCategoryExcludedByConfig = function(item) {
 
 /* Favorites appear twice on a page so we need to exclude them from calculation. */
 var isCategoryInFavorites = function(item) {
-    var categoryGroupElement = item.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement
+    var categoryGroupElement = item.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;
 
     return categoryGroupElement.classList.contains("Budget-budgetGroup--favorites");
 };
