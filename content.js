@@ -17,8 +17,10 @@ var elementExistsOnPage = function (elementFunction) {
 };
 
 /* This is a timer method to trigger functions once an element has actually loaded on screen */
+const MAX_ATTEMPTS_TO_FIND_ELEMENT = 80;
 var executeAfterElementLoaded = function(elementFunction, callback) {
     console.log("Waiting for element to load.");
+    let numberOfChecks = 0;
     var checkExist = setInterval(function () {
         console.log("Checking if element exists.");
 
@@ -27,6 +29,10 @@ var executeAfterElementLoaded = function(elementFunction, callback) {
             clearInterval(checkExist);
 
             callback();
+        }
+
+        if (++numberOfChecks > MAX_ATTEMPTS_TO_FIND_ELEMENT) {
+            clearInterval(checkExist)
         }
     }, 100);
 };
@@ -46,7 +52,7 @@ var convertMoneyStringToNumber = function(moneyString) {
 };
 
 var bankAccountElements = function() {
-    return document.querySelectorAll(".BankAccount");
+    return document.querySelectorAll('div[class^="BankAccount-module__DescriptionLine"]');
 };
 
 var retreiveAccountBalanceFromModal = function (accountName) {
@@ -55,11 +61,11 @@ var retreiveAccountBalanceFromModal = function (accountName) {
 
     var accountBalance = 0.00;
     bankElements.forEach(function(item) {
-        var itemAccountName = item.querySelector(".BankAccount-name").innerText;
+        var itemAccountName = item.querySelector('div[class^="BankAccount-module__Name"]').innerText;
         console.log("Account Name: " + itemAccountName);
 
         if (accountName == itemAccountName) {
-            var accountBalanceString = item.querySelector(".BankAccount-balance .money").dataset.text;
+            var accountBalanceString = item.querySelector('[data-testid="bank_account_balance"] .money').dataset.text;
             console.log("Account " + accountName + " balance is " + accountBalanceString);
             accountBalance += convertMoneyStringToNumber(accountBalanceString);
         }
