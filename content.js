@@ -230,7 +230,7 @@ var addRefreshLinkToNav = function() {
 
     console.log("Adding refresh link to Navbar.");
 
-    var navBarListElement = document.querySelector(".Navbar-content .list-block");
+    var navBarListElement = document.querySelector(".Navbar-content .list-none");
     navBarListElement.insertAdjacentHTML("beforeend", refreshLinkHtml());
 
     refreshLinkElement().addEventListener("click", syncSettingsAndExecuteCalculations);
