@@ -168,32 +168,32 @@ var accountBalanceHtml = function ({ budgetNeedFormatted,
                                      balanceDifferenceFormatted } = {}) {
     return '<div class="extensions-AccountBalance">\n' +
         '  <ul class="BudgetOverviewList list-block BudgetOverview-list">\n' +
-        '    <li class="BudgetOverviewList-item list-item small ui-content">\n' +
-        '      <div class="ui-flex-row">\n' +
-        '        <div class="BudgetOverviewList-label ui-flex-column-6" data-text="Balance Needed">Budget Need</div>\n' +
-        '        <div class="ui-flex-column-2 ui-flex-column--column text--right" data-text="Refresh">\n' +
+        '    <li class="BudgetOverviewList-item border-b-0 text-2 p-1.5">\n' +
+        '      <div class="flex flex-row items-center justify-start">\n' +
+        '        <div class="BudgetOverviewList-label basis-1/2" data-text="Balance Needed">Budget Need</div>\n' +
+        '        <div class="BudgetOverviewList-label basis-1/2 text--right" data-text="Refresh">\n' +
         '        </div>\n' +
         '        <div class="BudgetOverviewList-value ui-flex-column-4 ui-flex-column--column text--right" ' +
         '             data-text="' + budgetNeedFormatted + '">' + budgetNeedFormatted + '\n' +
         '        </div>\n' +
         '      </div>\n' +
         '    </li>\n' +
-        '    <li class="BudgetOverviewList-item list-item small ui-content">\n' +
-        '      <div class="ui-flex-row">\n' +
-        '        <div class="BudgetOverviewList-label ui-flex-column-6" data-text="Account Balance">Account Balance' +
+        '    <li class="BudgetOverviewList-item border-b-0 text-2 p-1.5">\n' +
+        '      <div class="flex flex-row items-center justify-start">\n' +
+        '        <div class="BudgetOverviewList-label basis-1/2" data-text="Account Balance">Account Balance' +
         '        </div>\n' +
-        '        <div class="ui-flex-column-2 ui-flex-column--column text--right" data-text="Refresh">\n' +
+        '        <div class="BudgetOverviewList-label basis-1/2 text--right" data-text="Refresh">\n' +
         '        </div>\n' +
         '        <div class="BudgetOverviewList-value ui-flex-column-4 ui-flex-column--column text--right" ' +
         '             data-text="' + accountBalanceFormatted + '">' + accountBalanceFormatted + '\n' +
         '        </div>\n' +
         '      </div>\n' +
         '    </li>\n' +
-        '    <li class="BudgetOverviewList-item list-item small ui-content">\n' +
-        '      <div class="ui-flex-row">\n' +
-        '        <div class="BudgetOverviewList-label ui-flex-column-6" data-text="Balance Difference">Balance Difference' +
+        '    <li class="BudgetOverviewList-item border-b-0 text-2 p-1.5">\n' +
+        '      <div class="flex flex-row items-center justify-start">\n' +
+        '        <div class="BudgetOverviewList-label basis-1/2" data-text="Balance Difference">Balance Difference' +
         '        </div>\n' +
-        '        <div class="ui-flex-column-2 ui-flex-column--column text--right" data-text="Refresh">\n' +
+        '        <div class="BudgetOverviewList-label basis-1/2 text--right" data-text="Refresh">\n' +
         '        </div>\n' +
         '        <div class="BudgetOverviewList-value ui-flex-column-4 ui-flex-column--column text--right" ' +
         '             data-text="' + balanceDifferenceFormatted + '">' + balanceDifferenceFormatted + '\n' +
