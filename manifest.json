@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "EveryDollar Extensions",
-  "version": "0.1",
+  "version": "0.2",
   "icons": {
     "32": "everydollar-32x32.png"
   },
