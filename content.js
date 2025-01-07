@@ -267,6 +267,12 @@ var formatCurrencyOrIndicateFetching = function (currencyNumber) {
     }
 };
 
+var fixAddTransactionLink = function () {
+    // fix a bug where the add transaction button is pushed off the screen
+    var addTransactionLink = document.querySelector("[data-testid='add_transaction_link']");
+    addTransactionLink.style.bottom = '9.5rem';
+}
+
 var displayBudgetNeedsAndBalanceDifference = function ({ budgetNeed,
                                                          accountBalance,
                                                          balanceDifference } = {}) {
@@ -283,6 +289,8 @@ var displayBudgetNeedsAndBalanceDifference = function ({ budgetNeed,
     } else {
         var sidebar = document.querySelector(".OperationsPanel");
         sidebar.insertAdjacentHTML("afterbegin", accountBalanceHtml(params));
+
+        fixAddTransactionLink();
     }
 
     colorCodeBalance(balanceDifference);
