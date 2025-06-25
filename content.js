@@ -39,12 +39,12 @@ var executeAfterElementLoaded = function(elementFunction, callback) {
 
 var openBankAccountPanel = function () {
     console.log("Opening accounts modal invisibly.");
-    document.querySelector(".AccountIcon").click();
+    document.querySelector('[data-testid="OperationsPanelTriggerAccounts"]').click();
 };
 
 var closeBankAccountPanel = function () {
     console.log("Closing accounts modal.");
-    document.querySelector("#Modal_close").click();
+    document.querySelector('[data-testid="Modal_close"]').click();
 };
 
 var convertMoneyStringToNumber = function(moneyString) {
