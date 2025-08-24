@@ -52,7 +52,7 @@ var convertMoneyStringToNumber = function(moneyString) {
 };
 
 var bankAccountElements = function() {
-    return document.querySelectorAll('div[class^="BankAccount-module__DescriptionLine"]');
+    return document.querySelectorAll('[data-testid="bank_account_name"]');
 };
 
 var retreiveAccountBalanceFromModal = function (accountName) {
@@ -61,11 +61,11 @@ var retreiveAccountBalanceFromModal = function (accountName) {
 
     var accountBalance = 0.00;
     bankElements.forEach(function(item) {
-        var itemAccountName = item.querySelector('div[class^="BankAccount-module__Name"]').innerText;
+        var itemAccountName = item.innerText;
         console.log("Account Name: " + itemAccountName);
 
         if (accountName == itemAccountName) {
-            var accountBalanceString = item.querySelector('[data-testid="bank_account_balance"] .money').dataset.text;
+            var accountBalanceString = item.parentElement.parentElement.querySelector('[data-testid="bank_account_balance"] .money').dataset.text;
             console.log("Account " + accountName + " balance is " + accountBalanceString);
             accountBalance += convertMoneyStringToNumber(accountBalanceString);
         }
